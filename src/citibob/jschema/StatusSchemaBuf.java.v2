@@ -1,0 +1,55 @@
+package citibob.jschema;
+
+import java.sql.*;
+import javax.swing.table.*;
+import javax.swing.event.*;
+
+import citibob.swing.table.CitibobTableModel;
+
+import java.util.*;
+
+public class StatusSchemaBuf extends AbstractTableModel
+{
+// ===============================================================
+// Implementation of TableModel
+
+// --------------------------------------------------
+public int findCol(String colName)
+{
+	if ("__status__".equals(colName)) return 0;
+	return super.findCol(colName) + 1;
+}
+public Class getColumnClass(int colIndex)
+{
+	if (colIndex == 0) return Integer.class;
+	return super.getColumnClass(colIndex-1);
+}
+public String getColumnName(int colIndex)
+{
+	if (colIndex == 0) return "__status__";
+	return super.getColumnName(colIndex-1);
+}
+// --------------------------------------------------
+public boolean isKey(int columnIndex)
+{
+	if (columnIndex == 0) return false;
+	return super.isKey(columnIndex-1);
+}
+// --------------------------------------------------
+public void setValueAt(Object val, int rowIndex, int colIndex)
+{
+	if (colIndex == 0) return;
+	super.setValueAt(val, rowIndex, colIndex-1);
+}
+// --------------------------------------------------
+public int getColumnCount()
+{
+	return super.getColCount() + 1;
+}
+public Object getValueAt(int rowIndex, int colIndex)
+{
+	if (colIndex == 0) return new Integer(getStatus());
+	return super.getValueAt(rowIndex, colIndex-1);
+}
+// --------------------------------------------------
+}
