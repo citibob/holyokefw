@@ -30,23 +30,23 @@ public class DbRawRun implements RawRun
 {
 
 App app;
-ConnPool pool;
+//ConnPool pool;
 //SqlBatchSet batchSet;
 //int recursionDepth;
 
-public ConnPool getPool() { return pool; }
+public ConnPool getPool() { return app.pool(); }
 public DbRawRun(App app)
 {
 	this.app = app;
-	this.pool = app.pool();
+//	this.pool = app.pool();
 }
 
-/** Will not work for SqlTask */
-public DbRawRun(ConnPool pool)
-{
-	this.app = null;
-	this.pool = pool;
-}
+///** Will not work for SqlTask */
+//public DbRawRun(ConnPool pool)
+//{
+//	this.app = null;
+//	this.pool = pool;
+//}
 
 public static Exception run(ETask r)
 {
@@ -145,7 +145,7 @@ public static Exception run(ConnPool pool, DbTask r)
 		ret = e;
 	} finally {
 		try {
-			pool.checkin(dbb);
+			if (pool != null) pool.checkin(dbb);
 		} catch(SQLException se) {}
 	}
 	return ret;
@@ -163,10 +163,10 @@ public Exception doRun(CBTask rr)
 		ret = run(r);
 	} else if (rr instanceof StTask) {
 		StTask r = (StTask)rr;
-		ret = run(pool,r);
+		ret = run(app.pool(),r);
 	} else if (rr instanceof DbTask) {
 		DbTask r = (DbTask)rr;
-		ret = run(pool,r);
+		ret = run(app.pool(),r);
 	} else {
 		ret = new ClassCastException("CBRunnable of class " + rr.getClass() + " is not one of ERunnable, StRunnable or DbRunnable");
 	}
